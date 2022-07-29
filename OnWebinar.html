@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <script>
+    class Racer{ //Основной класс, по которому формируем гонщика.
+      index;
+      firstName;
+      lastName;
+      rating;
+      constructor(index,firstName,lastName, country,rating,score){
+        this.index = index;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.rating = rating;
+        this.score = score;
+        this.country = country;
+      }
+    }
+                        //index,fname,lname,country,rating,score
+    let racer1 = new Racer(1,'Mikhail','Selyuk','Russia',2,0);
+    let racer2 = new Racer(2,'Ivan','Mikheev','Russia',5,0);
+    let racer3 = new Racer(3,'Semen','Rysjalov','Russia',3,0);
+    let racer4 = new Racer(4,'Veronika','Dolgich','Russia',8,0);
+    let racer5 = new Racer(1,'Nikola','Tesla','USA',12,0);
+    let racer6 = new Racer(2,'Stive','Jobs','USA',2,0);
+    let racer7 = new Racer(3,'Sidni','Sheldon','USA',9,0);
+    let racer8 = new Racer(4,'Ilon','Mask','USA',8,0);
+    let racer9 = new Racer(1,'Tadashi','Yanai','Japan',9,0);
+    let racer10 = new Racer(2,'Masayoshi','Son','Japan',9,0);
+    let racer11 = new Racer(3,'Takemitsu','Takizaki','Japan',2,0);
+    let racer12 = new Racer(4,'Takahisa','Takahara','Japan',8,0);
+    let racer13 = new Racer(1,'Olivier','Dassault','France',3,0);
+    let racer14 = new Racer(2,'Laurent','Dassault','France',5,0);
+    let racer15 = new Racer(3,'Drakhi','Wig','France',4,0);
+    let racer16 = new Racer(4,'François','Pinault','France',8,0);
+    let racer17 = new Racer(1,'Dieter','Schwartz','Germany',10,0);
+    let racer18 = new Racer(2,'Friedrich','Engelhorn','Germany',5,0);
+    let racer19 = new Racer(3,'Klaus-Michael','Kühne','Germany',3,0);
+    let racer20 = new Racer(4,'Johanna','Quandt','Germany',3,0);
+    let racers = [racer1,racer2,racer3,racer4,racer5,racer6,racer7,racer8,racer9,racer10,
+                     racer11,racer12,racer13,racer14,racer15,racer16,racer17,racer18,racer19,racer20];
+
+    function setScore(racers){ //За каждым гонщиком страны фиксируем результат гонки.
+      for(let racer of racers){
+        if(racer.score != 0){
+          racer.score += Math.floor(Math.random() * 101);
+        }else{
+          racer.score = Math.floor(Math.random() * 101);
+        }
+      }  
+     return racers //Возвращаем обновленный объект с очками.
+   }
+
+  function setLap(racers, laps = 1,){ //Установка количества этапов.
+    let arr = [];
+    while(laps > 0){
+      arr.push(setScore(racers));
+      laps--;
+    }
+    return arr
+  }
+
+  function filterCountry(listRacers, nameCountry){ //Поиск среди всех гонщиков - принадлежащие определенной стране.
+    for(let elem of listRacers){
+      return (elem.filter(node => node.country == nameCountry));
+    }
+  }
+  function calculateLooserIndex(country){ // Ищем худшего в стране. Считает в рамках страны в этапе
+    let looserScore = [country[0].score, country[1].score,country[2].score,country[3].score];
+    let looserIndex = looserScore.findIndex(node => node == Math.max(...looserScore));
+    return looserIndex;
+  }
+  function calculateWinnerIndex(country){ //Ищем лучшего в стране. Считает в рамках страны в этапе
+    let winnerScore = [country[0]?.score, country[1]?.score, country[2]?.score,country[3]?.score];
+    let winnerIndex = winnerScore.findIndex(node => node == Math.min(...winnerScore));
+    return winnerIndex;
+  }
+  function getLeaderBoard(listRacers){ //Сортируем объекты по свойству - очки. Участвует в функциях вывода.
+    let functionList = listRacers.map(function (item){; return [...item]});
+    for(elem of functionList){
+      elem.forEach(element => {
+        elem.sort((a,b) => a.score > b.score ? 1:-1);
+      });
+    }
+    return functionList
+  }
+  function getWinnerOnStage(listRacers){ //Получение очков по итогам 1 этапа.
+    for(let elem of listRacers){
+      let listRussian = filterCountry(listRacers, 'Russia');
+      let listUSA = filterCountry(listRacers, 'USA');
+      let listJapan = filterCountry(listRacers, 'Japan');
+      let listFrance = filterCountry(listRacers, 'France');
+      let listGermany = filterCountry(listRacers, 'Germany');      
+      let russianScore = listRussian[calculateLooserIndex(listRussian)];
+      let usaScore = listUSA[calculateLooserIndex(listUSA)];
+      let japanScore = listJapan[calculateLooserIndex(listJapan)];
+      let franceScore = listFrance[calculateLooserIndex(listFrance)];
+      let germanyScore = listGermany[calculateLooserIndex(listGermany)];
+      let scores = [russianScore.score, usaScore.score, japanScore.score, franceScore.score, germanyScore.score];
+      let cycleIndex = 6;
+      while(cycleIndex > 0){
+        cycleIndex--;
+        let looserIndex = scores.findIndex(node => node == Math.max(...scores));
+        scores[looserIndex] = -1;
+        scoresCountry[looserIndex] += cycleIndex;
+      }
+    }
+  }
+  function getWinnerOnStage2(listRacers){ //Получение очков по итогам 2 этапа.
+    for(let elem of listRacers){ //Требуется для корректной работы счетчика, если введено несколько этапов.
+      let listRussian = filterCountry(listRacers, 'Russia');
+      let listUSA = filterCountry(listRacers, 'USA');
+      let listJapan = filterCountry(listRacers, 'Japan');
+      let listFrance = filterCountry(listRacers, 'France');
+      let listGermany = filterCountry(listRacers, 'Germany');
+      let russianScore = listRussian[calculateWinnerIndex(listRussian)];
+      let usaScore = listUSA[calculateWinnerIndex(listUSA)];
+      let japanScore = listJapan[calculateWinnerIndex(listJapan)];
+      let franceScore = listFrance[calculateWinnerIndex(listFrance)];
+      let germanyScore = listGermany[calculateWinnerIndex(listGermany)];
+      let scores = [russianScore?.score, usaScore?.score, japanScore?.score, franceScore?.score, germanyScore?.score];
+      let cycleIndex = 6;
+      while(cycleIndex > 0){
+        cycleIndex--;
+        let looserIndex = scores.findIndex(node => node == Math.max(...scores));
+        if(looserIndex == -1){
+          continue;
+        }
+        scores[looserIndex] = -1;
+        scoresCountry[looserIndex] += cycleIndex;
+      }
+    }
+  }
+
+  function filterCountryToStage2(listRacers){ //Отсечение слабейшей команды. Происходит до расчетов мест.
+    let nameCountryIndex = scoresCountry.indexOf(Math.max(...scoresCountry));
+    let nameCountry = switchIndexToCountry(nameCountryIndex);
+    let arr = [];
+    for(let elem of listRacers){
+      arr.push(elem.filter(node => node.country !== nameCountry));
+    }
+    return arr 
+  }
+  function scoreInStageBetweenBest(scoresCountry){
+    //Проверяем, есть ли два победителя. Если есть - для лучшего увеличиваем значение для поднятия места.
+    for(let i = 0; i < scoresCountry.length; i++){
+      for(let j = i+1; j < scoresCountry.length; j++){
+        if(scoresCountry[i] == scoresCountry[j]){
+          if(scoresCountry[i] == Math.min(...scoresCountry)){
+            let result1 = listCountry[i][calculateWinnerIndex(listCountry[i])].score;
+            let result2 = listCountry[j][calculateWinnerIndex(listCountry[j])].score;
+            if(result1 > result2){
+              scoresCountry[i] += 0.1;
+            }
+          }
+        }
+      }
+    } 
+  }
+  function viewStageResultsByCountries(numberOfLaps){ //Вывод рейтинга по странам в консоль..
+    let sorted = scoresCountry.slice();
+    sorted.sort((a,b) => a - b);
+    console.log(`Круг состоял из ${numberOfLaps} этапов. Команд 5. Худшая команда получает 5 баллов. Лучшая - 1 балл.`);
+    console.log(`Таблица лидеров по странам. Меньше - лучше.`);
+    console.log(`Russia заняла ${sorted.indexOf(scoresCountry[0]) + 1}  место. Рейтинг: ${scoresCountry[0]}`);
+    console.log(`USA заняла ${sorted.indexOf(scoresCountry[1]) + 1}  место. Рейтинг: ${scoresCountry[1]}`);
+    console.log(`Japan заняла ${sorted.indexOf(scoresCountry[2]) + 1}  место. Рейтинг: ${scoresCountry[2]}`);
+    console.log(`France заняла ${sorted.indexOf(scoresCountry[3]) + 1}  место. Рейтинг: ${scoresCountry[3]}`);
+    console.log(`Germany заняла ${sorted.indexOf(scoresCountry[4]) + 1}  место. Рейтинг: ${scoresCountry[4]}`);
+  }
+  function viewLeaderBoard(leaderObj){ // Вывод рейтинга личного зачета.
+    let i = 1;
+    console.log('Таблица лидеров по итогам круга, общий зачет. Меньше - лучше.');
+    leaderObj.forEach(element =>{console.log(`Страна: ${element.country}, ФИО: ${element.firstName +' '+ element.lastName}, Результат: ${element.score} Место: ${i}.`); i++});
+  }
+  function switchIndexToCountry(index){ //Вспомогательная функция для связи индекса и стран гонщиков.
+    let result;
+    switch(index){
+      case 0: result = 'Russia';
+      break;
+      case 1: result = 'USA';
+      break;
+      case 2: result = 'Japan';
+      break;
+      case 3: result = 'France';
+      break;
+      case 4: result = 'Germany';
+      break;
+    }
+    return result
+  }
+  function viewWinner(){ //Поиск наименьшего количества мест и его вывод через alert
+    let result = scoresCountry.indexOf(Math.min(...scoresCountry));
+    let winner = switchIndexToCountry(result);
+    let text = `Победитель определен!
+      ${String.fromCodePoint(127881)} ${winner} ${String.fromCodePoint(127881)}
+Рейтинг победителя: ${scoresCountry[result]}`;
+    alert(text);
+  }
+
+  function startRace(){ //Непосредственно пользовательский интерфейс и основная логика.
+    let numberOfLaps = +prompt('Введите количество этапов для круга');
+      if(isNaN(numberOfLaps) || numberOfLaps <= 0){ //Проверка на корректность ввода.
+        if(confirm('Введено не число, либо число меньше, либо равно нулю. Повторить ввод?')){
+          location.reload();
+        }else{
+          alert('Выполнение задачи прекращено. Обновите страницу.');
+          return
+        }
+      }
+    let listRacers = setLap(racers, numberOfLaps); //Генерируем массив объектов. Первая вложенность - данные этапа. Вторая - данные гонщиков.
+    getWinnerOnStage(listRacers); //Считаем результат, вносим в scoresCountry
+    scoreInStageBetweenBest(scoresCountry); //Проверяем, есть ли два победителя. Если нужно - корректируем значение.
+    viewStageResultsByCountries(numberOfLaps); //Вывод результата команд после 1 круга
+    viewLeaderBoard(getLeaderBoard(listRacers)[0]); //Вывод результата команд после 1 круга
+    if(confirm('Первый круг успешно завершен. Запускаем второй круг?')){ //Условия задачи.
+      let listRacers2 = setLap(racers, 2); //Массив объектов для 2 круга.
+      listRacers2 = filterCountryToStage2(listRacers2); //Удаляем слабейшую команду.
+      getWinnerOnStage2(listRacers2); //Считаем результат, вносим в scoresCountry
+      console.log('Рейтинг стран по итогам сумме двух этапов.')//UserFriendly
+      viewStageResultsByCountries(numberOfLaps); //Думаю понятно. Рейтинг стран по итогам сумме двух этапов.
+      console.log('Личный зачет по итогу второго круга');//UserFriendly
+      viewLeaderBoard(getLeaderBoard(listRacers2[0]));//Думаю понятно. Личный зачет по итогу второго круга
+    }else{
+      alert('Как скажете. Результат 1 круга в консоли.');
+    }
+  }
+let scoresCountry = [0,0,0,0,0];//Массив результатов команды
+startRace();//Погнали
+viewWinner();//Вывод победителя
+console.log(scoresCountry);//Для отладки и сверки с результатами.
+ </script>
+</head>
+<body>
+  
+</body>
+</html>
